@@ -1,7 +1,7 @@
 import typing
 
 from pyldplayer._internal.model.list2meta import List2Meta
-from src.pyldplayer._internal import SOptional
+from pyldplayer._internal import SOptional
 
 SIMPLE_EXEC_LIST = [
     "rock",
