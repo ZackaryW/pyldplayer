@@ -30,7 +30,7 @@ class Console(I.IConsole):
         res = query(self.path.ldconsole_path, "list2")
         res = res.decode()
         reslines = res.splitlines()
-        return [List2Meta(**{k : v for k, v in zip(List2Meta.__annotations__, resline.split(","))}) for resline in reslines]
+        return [List2Meta(**{k : v if not v.isdigit() else int(v) for k, v in zip(List2Meta.__annotations__, resline.split(","))}) for resline in reslines]
 
     def globalsetting(
         self,
