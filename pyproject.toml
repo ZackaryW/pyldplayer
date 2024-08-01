@@ -1,6 +1,6 @@
 [project]
 name = "pyldplayer"
-version = "3.0.2"
+version = "3.0.3"
 description = "base command-line and folder structure wrapper for LDPlayer"
 authors = [
     { name = "ZackaryW", email = "36378555+ZackaryW@users.noreply.github.com" }
