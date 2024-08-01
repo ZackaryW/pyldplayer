@@ -8,6 +8,7 @@ SIMPLE_EXEC_LIST = [
     "zoomOut",
     "zoomIn",
     "sortWnd",
+    "quitall"
 ]
 
 VARIED_EXEC_LIST = [
@@ -49,6 +50,7 @@ class IConsole:
     zoomOut: typing.Callable[["IConsole"], None]
     zoomIn: typing.Callable[["IConsole"], None]
     sortWnd: typing.Callable[["IConsole"], None]
+    quitall : typing.Callable[["IConsole"], None]
 
     # simple varied exec
     def quit(
