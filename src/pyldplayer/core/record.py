@@ -29,11 +29,10 @@ class RecordCollection:
     def get(self, name: str):
         if not name.endswith(".record"):
             name += ".record"
-
-        if not os.path.exists(self.__path.operation_records_folder / name):
+        if not os.path.exists(os.path.join(self.__path.operation_records_folder, name)):
             raise FileNotFoundError(f"Record {name} not found")
 
-        with open(self.__path.operation_records_folder / name, "r") as f:
+        with open(os.path.join(self.__path.operation_records_folder, name), "r") as f:
             raw = json.load(f)
 
         return OperationRecord(**raw)
@@ -41,9 +40,9 @@ class RecordCollection:
     def save(self, name: str, record: OperationRecord):
         self.get.cache_clear()
 
-        with open(self.__path.operation_records_folder / name, "w") as f:
+        with open(os.path.join(self.__path.operation_records_folder, name), "w") as f:
             json.dump(asdict(record), f, indent=4)
-
+            
     @classmethod
     def auto(cls):
         return cls(LDPath.auto())
