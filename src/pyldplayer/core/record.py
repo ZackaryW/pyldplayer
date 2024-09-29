@@ -25,24 +25,27 @@ class RecordCollection:
             # only name remove extension
             yield os.path.splitext(os.path.basename(filepath))[0]
 
-    @cache
     def get(self, name: str):
+        rawstr = self.getStr(name)
+        raw = json.loads(rawstr)
+        return OperationRecord(**raw)
+    
+    @cache
+    def getStr(self, name: str):
         if not name.endswith(".record"):
             name += ".record"
         if not os.path.exists(os.path.join(self.__path.operation_records_folder, name)):
             raise FileNotFoundError(f"Record {name} not found")
 
         with open(os.path.join(self.__path.operation_records_folder, name), "r") as f:
-            raw = json.load(f)
-
-        return OperationRecord(**raw)
-
+            return f.read()
+    
     def save(self, name: str, record: OperationRecord):
-        self.get.cache_clear()
+        self.getStr.cache_clear()
 
         with open(os.path.join(self.__path.operation_records_folder, name), "w") as f:
             json.dump(asdict(record), f, indent=4)
-            
+
     @classmethod
     def auto(cls):
         return cls(LDPath.auto())
