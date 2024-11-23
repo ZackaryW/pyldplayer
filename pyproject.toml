@@ -1,7 +1,7 @@
 [project]
 name = "pyldplayer"
-version = "3.0.6"
-description = "base command-line and folder structure wrapper for LDPlayer"
+version = "4.0.0"
+description = "python wrapper for LDPlayer with no additional dependencies"
 authors = [
     { name = "ZackaryW", email = "36378555+ZackaryW@users.noreply.github.com" }
 ]
@@ -15,7 +15,9 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = []
+dev-dependencies = [
+    "pytest>=8.3.3",
+]
 
 [tool.hatch.metadata]
 allow-direct-references = true
