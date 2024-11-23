@@ -1,4 +1,9 @@
+from dataclasses import asdict, dataclass
+import json
 from typing import TypedDict, Optional
+import typing
+
+from pyldplayer.utils import parse_dotted_dict, flatten_nested_dict
 
 
 class HotkeySettings(TypedDict):
@@ -98,10 +103,26 @@ class StatusSettings(TypedDict):
     playerName: str
 
 
-class LeidianConfig(TypedDict):
+@dataclass
+class LeidianConfig:
+    _path : str
     propertySettings: PropertySettings
     statusSettings: StatusSettings
     basicSettings: BasicSettings
     networkSettings: NetworkSettings
-    advancedSettings: AdvancedSettings
-    hotkeySettings: HotkeySettings
+    advancedSettings: typing.Optional[AdvancedSettings] = None
+    hotkeySettings: typing.Optional[HotkeySettings] = None
+    
+
+    @classmethod
+    def load(cls, path : str):
+        with open(path, 'r') as f:
+            data = json.load(f)
+            data = parse_dotted_dict(data)
+
+        return cls(**data, _path=path)
+
+    def save(self):
+        with open(self._path, 'w') as f:
+            json.dump(flatten_nested_dict(asdict(self)), f, indent=4)
+

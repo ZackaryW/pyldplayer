@@ -1,6 +1,8 @@
-from .core.config import ConfigCollection
-from .core.g import Global
-from .core.mapping import MappingCollection
-from .core.path import LDPath
-from .core.record import RecordCollection
-from .core.console import Console
+
+from .coms.app import LDApp, Flags
+from .coms.appattr import LDAppAttr
+from .coms.console import LDConsole
+from .coms.batchConsole import LDBatchConsole
+
+# legacy
+Console = LDConsole

@@ -1,7 +1,7 @@
 import typing
 
-from pyldplayer._internal.model.list2meta import List2Meta
-from pyldplayer._internal import SOptional
+from pyldplayer.model.list2meta import List2Meta
+from pyldplayer.i import SOptional
 
 SIMPLE_EXEC_LIST = [
     "rock",
@@ -43,14 +43,29 @@ SIMPLE_QUERY_LIST = ["list", "runninglist"]
 
 VARIED_QUERY_LIST = ["isrunning", "getprop", "operatelist", "operateinfo"]
 
+BATCHABLE_COMMANDS = [
+    "modify",
+    "quit",
+    "launch",
+    "reboot",
+    "installapp",
+    "uninstallapp",
+    "runapp",
+    "killapp",
+    "pull",
+    "push",
+    "backupapp",
+    "restoreapp",
+    "launchex",
+]
 
-class IConsole:
+class LDConsoleI:
     # simple exec
-    rock: typing.Callable[["IConsole"], None]
-    zoomOut: typing.Callable[["IConsole"], None]
-    zoomIn: typing.Callable[["IConsole"], None]
-    sortWnd: typing.Callable[["IConsole"], None]
-    quitall : typing.Callable[["IConsole"], None]
+    rock: typing.Callable[["LDConsoleI"], None]
+    zoomOut: typing.Callable[["LDConsoleI"], None]
+    zoomIn: typing.Callable[["LDConsoleI"], None]
+    sortWnd: typing.Callable[["LDConsoleI"], None]
+    quitall : typing.Callable[["LDConsoleI"], None]
 
     # simple varied exec
     def quit(
@@ -239,9 +254,9 @@ class IConsole:
         pass
 
     # simple query
-    list: typing.Callable[["IConsole"], None]
-    runninglist: typing.Callable[["IConsole"], None]
-    list2: typing.Callable[["IConsole"], None]
+    list: typing.Callable[["LDConsoleI"], None]
+    runninglist: typing.Callable[["LDConsoleI"], None]
+    list2: typing.Callable[["LDConsoleI"], None]
 
     # varied query
     def operatelist(

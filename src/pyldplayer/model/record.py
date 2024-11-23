@@ -1,4 +1,5 @@
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
+import json
 from typing import List, Optional, TypedDict
 
 
@@ -37,6 +38,21 @@ class ReturnInfo(TypedDict):
 
 
 @dataclass
-class OperationRecord:
+class LDRecord:
+    _path : str
     recordInfo: RecordInfo
     operations: List[Operation] = field(default_factory=list)
+    
+
+    @classmethod
+    def load(cls, path : str):
+        with open(path, "r") as f:
+            data = json.load(f)
+        
+        return cls(**data, _path=path)
+
+    def save(self):
+        with open(self._path, "w") as f:
+            json.dump(asdict(self), f, indent=4)
+
+

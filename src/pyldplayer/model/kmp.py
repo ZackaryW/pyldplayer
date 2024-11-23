@@ -1,21 +1,22 @@
 from dataclasses import dataclass, field, asdict
+import json
 from typing import List, Union
 
 
-@dataclass
+@dataclass(slots=True)
 class Point:
     x: int
     y: int
 
 
-@dataclass
+@dataclass(slots=True)
 class CurvePoint:
     x: int
     y: int
     timing: int
 
 
-@dataclass
+@dataclass(slots=True)
 class ResolutionPattern:
     width: int
     height: int
@@ -127,3 +128,21 @@ class KeyboardMapping:
             "keyboardConfig": keyboardConfig,
             "keyboardMappings": keyboardMappings,
         }
+
+@dataclass
+class KeyboardMappingFile:
+    _path : str
+    keyboardMapping: KeyboardMapping
+    
+
+    @classmethod
+    def load(cls, path : str):
+        with open(path, "r") as f:
+            data = json.load(f)
+        
+        return cls(keyboardMapping=KeyboardMapping.from_dict(data), _path=path)
+    
+    def save(self):
+        with open(self._path, "w") as f:
+            json.dump(self.keyboardMapping.to_dict(), f, indent=4)
+

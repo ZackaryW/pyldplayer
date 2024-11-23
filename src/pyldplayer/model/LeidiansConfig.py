@@ -1,12 +1,19 @@
-from typing import NotRequired, TypedDict
+from dataclasses import asdict, dataclass
+import json
+from typing import TypedDict
+import typing
+from ..utils import flatten_nested_dict, parse_dotted_dict
 
 
 class WindowsPosition(TypedDict):
     x: int
     y: int
 
+class BasicSettings(TypedDict):
+    lastIp : typing.Optional[str]
 
-class LeidiansConfig(TypedDict):
+@dataclass
+class LeidiansConfig:
     nextCheckupdateTime: int
     hasPluginLast: bool
     strp: str
@@ -14,7 +21,7 @@ class LeidiansConfig(TypedDict):
     lastZoneName: str
     vipMode: bool
     isBaseboard: bool
-    lastIP: NotRequired[str]
+    basicSettings: BasicSettings
     noiceUserRed: bool
     isFirstInstallApk: bool
     cloneFromSmallDisk: bool
@@ -47,3 +54,19 @@ class LeidiansConfig(TypedDict):
     channelLastOpenId: str
     operaRecordFirstDo: bool
     remoteEntranceVersion: int
+    _path: str
+
+    @classmethod
+    def load(cls, path : str):
+        with open(path, 'r') as f:
+            data = json.load(f)
+            data = parse_dotted_dict(data)
+
+        
+            data = {k : v for k, v in data.items() if k in cls.__dataclass_fields__}
+
+        return cls(**data, _path=path)
+
+    def save(self):
+        with open(self._path, 'w') as f:
+            json.dump(flatten_nested_dict(asdict(self)), f, indent=4)

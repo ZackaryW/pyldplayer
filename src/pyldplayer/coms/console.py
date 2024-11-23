@@ -2,23 +2,17 @@
 import logging
 import typing
 import inspect
-import pyldplayer._internal.iconsole as I
-from pyldplayer._internal.model.list2meta import List2Meta
-from pyldplayer.core.path import LDPath
-from pyldplayer.utils import open_detached, query, queryCtx
+import pyldplayer.i.console as I
+from ..model.list2meta import List2Meta
+from ..utils import open_detached, query
+from ..coms.appattr import ContainLDAppAttrI, LDAppAttr
 
-
-class Console(I.IConsole):
-    def __init__(self, path : LDPath):
-        self.__path = path
-
-    @property
-    def path(self) -> LDPath:
-        return self.__path
-
-    @classmethod
-    def auto(cls):
-        return cls(LDPath.auto())
+class LDConsole(I.LDConsoleI, ContainLDAppAttrI):
+    """
+    A class for interacting with the LDPlayer console.
+    """
+    def __init__(self, attr : LDAppAttr = None):
+        ContainLDAppAttrI.__init__(self, attr)
     
     def list2(self) -> typing.List[List2Meta]:
         """
@@ -27,8 +21,7 @@ class Console(I.IConsole):
         Returns:
             typing.List[List2Meta]: A list of List2Meta objects representing the retrieved data.
         """
-        res = query(self.path.ldconsole_path, "list2")
-        res = res.decode()
+        res = query(self.attr.ldconsole, "list2")
         reslines = res.splitlines()
         return [List2Meta(**{it[0] : it[1](v) for it, v in zip(List2Meta.__annotations__.items(), resline.split(","))}) for resline in reslines]
 
@@ -40,7 +33,7 @@ class Console(I.IConsole):
         cleanmode: typing.Optional[bool] = None,
     ):
         """
-        Sets global settings for the console.
+        Sets global settings for the LDConsole.
 
         Args:
             fps (int, optional): The frames per second setting. Defaults to None.
@@ -49,7 +42,7 @@ class Console(I.IConsole):
             cleanmode (bool, optional): Whether to enable clean mode. Defaults to None.
 
         Returns:
-            Console: The current Console instance.
+            LDConsole: The current LDConsole instance.
         """
         arglist = []
         if fps is not None:
@@ -60,7 +53,7 @@ class Console(I.IConsole):
             arglist.extend(["--fastplay", 1 if fastplay else 0])
         if cleanmode is not None:
             arglist.extend(["--cleanmode", 1 if cleanmode else 0])
-        open_detached(self.path.ldconsole_path, "globalsetting", *arglist)
+        open_detached(self.attr.ldconsole, "globalsetting", *arglist)
         return self
 
     def modify(
@@ -120,16 +113,16 @@ class Console(I.IConsole):
             arglist.extend(["--lockwindow", 1 if lockwindow else 0])
         if root is not None:
             arglist.extend(["--root", 1 if root else 0])
-        open_detached(self.path.ldconsole_path, "modify", *arglist)
+        open_detached(self.attr.ldconsole, "modify", *arglist)
 
 def _create_simple_exec_method(command: str):
     def method(self) -> None:
         logging.info(f"Running exec command: {command}")
-        open_detached(self.path.ldconsole_path, command)
+        open_detached(self.attr.ldconsole, command)
     return method   
 
 for se in I.SIMPLE_EXEC_LIST:
-    setattr(Console, se, _create_simple_exec_method(se))
+    setattr(LDConsole, se, _create_simple_exec_method(se))
 
 
 def _create_varied_method(func: typing.Callable, methodToUse : typing.Callable):
@@ -180,24 +173,24 @@ def _create_varied_method(func: typing.Callable, methodToUse : typing.Callable):
                     raise ValueError(f"Mandatory parameter '{param_name}' is missing")
 
         # Execute the command
-        return methodToUse(self.path.ldconsole_path, *command_list)
+        return methodToUse(self.attr.ldconsole, *command_list)
 
     return method
 
 for ve in I.VARIED_EXEC_LIST:
-    func = getattr(I.IConsole, ve)
-    setattr(Console, ve, _create_varied_method(func, open_detached))
+    func = getattr(I.LDConsoleI, ve)
+    setattr(LDConsole, ve, _create_varied_method(func, open_detached))
 
 def _simple_query_method(command : str):
     def method(self) -> None:
         logging.info(f"Running query command: {command}")
-        return query(self.path.ldconsole_path, command)
+        return query(self.attr.ldconsole, command)
     return method
 
 for sq in I.SIMPLE_QUERY_LIST:
-    setattr(Console, sq, _simple_query_method(sq))
+    setattr(LDConsole, sq, _simple_query_method(sq))
 
 for eq in I.VARIED_QUERY_LIST:
-    func = getattr(I.IConsole, eq)
+    func = getattr(I.LDConsoleI, eq)
     
-    setattr(Console, eq, _create_varied_method(func, query))
+    setattr(LDConsole, eq, _create_varied_method(func, query))

@@ -125,48 +125,27 @@ def open_detached(path: str, *args) -> None:
     except Exception as e:
         logging.error(f"Failed to start subprocess: {e}")
 
-
-class queryCtx(typing.TypedDict):
+def query_bytes(
+    path: str,
+    *args,
+    timeout: int = None,
+):
     """
-    A dictionary containing additional context for processing the subprocess output.
-
-    Attributes:
-        decode (str, optional): The name of the encoding used to decode the output of the subprocess.
-        decodeOrder (List[str], optional): A list of encodings to try when decoding the output of the subprocess.
-        toList (bool, optional): Whether to split the output of the subprocess into a list of lines.
-        stripNull (bool, optional): Whether to remove null characters from the output of the subprocess.
-        stripEmpty (bool, optional): Whether to remove empty lines from the output of the subprocess.
-    """
-
-    decode: typing.NotRequired[str]
-    decodeOrder: typing.NotRequired[typing.List[str]]
-    toList: typing.NotRequired[bool]
-    stripNull: typing.NotRequired[bool]
-    stripEmpty: typing.NotRequired[bool]
-
-
-def query(path: str, *args, timeout: int = 5, ctx: queryCtx = None) -> bytes:
-    """
-    Runs a subprocess with the given path and arguments, captures its output, and returns it as a byte string.
+    Executes a subprocess and returns the captured output as bytes.
 
     Args:
-        path (str): The path to the executable file.
-        *args: Additional arguments to be passed to the executable.
-        timeout (int, optional): The maximum amount of time to wait for the subprocess to complete. Defaults to 5.
-        ctx (queryCtx, optional): Additional context for processing the subprocess output. Defaults to None.
-
-    Returns:
-        bytes: The output of the subprocess as a byte string.
+        path (str): The path to the executable to run.
+        *args: Additional arguments to pass to the executable.
+        timeout (int, optional): The maximum time in seconds to wait for the subprocess to complete. If not provided, the `DEFAULT_QUERY_TIMEOUT` value will be used.
 
     Raises:
         subprocess.TimeoutExpired: If the subprocess takes longer than the specified timeout to complete.
-        subprocess.CalledProcessError: If the subprocess returns a non-zero exit status.
+        subprocess.CalledProcessError: If the subprocess returns a non-zero exit code.
 
-    Example:
-        >>> query("path/to/executable", "arg1", "arg2")
-        b'output of the subprocess'
+    Returns:
+        bytes: The captured output of the subprocess.
     """
-
+    timeout = timeout or 5
     try:
         command = [path, *(str(arg) for arg in args)]
         proc = subprocess.run(command, capture_output=True, timeout=timeout)
@@ -175,32 +154,24 @@ def query(path: str, *args, timeout: int = 5, ctx: queryCtx = None) -> bytes:
     except subprocess.CalledProcessError as e:
         raise e
 
-    if ctx is None:
-        return proc.stdout
+    return proc.stdout
 
-    if "decode" in ctx:
-        decoded = proc.stdout.decode(ctx["decode"])
-    elif "decodeOrder" in ctx:
-        for decode in ctx["decodeOrder"]:
-            try:
-                decoded = proc.stdout.decode(decode)
-                break
-            except UnicodeDecodeError:
-                pass
 
-    if "toList" in ctx and ctx["toList"]:
-        decodedList = decoded.split("\n")
-    else:
-        return decoded
+def query(path: str, *args, timeout: int = None, strip: bool = False):
+    """
+    Executes a subprocess and returns the captured output as a string.
 
-    if "stripNull" in ctx and ctx["stripNull"]:
-        decodedList = list(filter(lambda x: x != "", decodedList))
+    Args:
+        path (str): The path to the executable to run.
+        *args: Additional arguments to pass to the executable.
+        timeout (int, optional): The maximum time in seconds to wait for the subprocess to complete. If not provided, the `DEFAULT_QUERY_TIMEOUT` value will be used.
 
-    if "stripEmpty" in ctx and ctx["stripEmpty"]:
-        blist = decodedList
-        decodedList = []
-        for b in blist:
-            if b not in [" ", "\t", "\n", "\r", "\x00", "\r\n", ""]:
-                decodedList.append(b.strip())
+    Raises:
+        subprocess.TimeoutExpired: If the subprocess takes longer than the specified timeout to complete.
+        subprocess.CalledProcessError: If the subprocess returns a non-zero exit code.
 
-    return decodedList
+    Returns:
+        str: The captured output of the subprocess as a string.
+    """
+    raw = query_bytes(path, *args, timeout=timeout)
+    return raw.decode("utf-8").strip() if strip else raw.decode("utf-8")
