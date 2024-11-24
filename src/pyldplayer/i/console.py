@@ -61,6 +61,8 @@ BATCHABLE_COMMANDS = [
 
 FULL_COMMANDS_LIST = SIMPLE_EXEC_LIST + VARIED_EXEC_LIST + SIMPLE_QUERY_LIST + VARIED_QUERY_LIST
 
+FULL_COMMANDS_LIST.extend(["list2", "modify", "globalsetting"])
+
 class LDConsoleI:
     # simple exec
     rock: typing.Callable[["LDConsoleI"], None]
