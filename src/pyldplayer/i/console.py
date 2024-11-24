@@ -59,6 +59,8 @@ BATCHABLE_COMMANDS = [
     "launchex",
 ]
 
+FULL_COMMANDS_LIST = SIMPLE_EXEC_LIST + VARIED_EXEC_LIST + SIMPLE_QUERY_LIST + VARIED_QUERY_LIST
+
 class LDConsoleI:
     # simple exec
     rock: typing.Callable[["LDConsoleI"], None]

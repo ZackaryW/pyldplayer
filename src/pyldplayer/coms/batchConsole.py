@@ -36,7 +36,7 @@ class LDBatchConsole(I.LDConsoleI, ContainLDAppAttrI):
             return super().__getattribute__(key)
         if key in I.BATCHABLE_COMMANDS:
             return self.__batch_command(key)
-        if key in I.VARIED_EXEC_LIST or key in I.SIMPLE_EXEC_LIST:
+        if key in I.FULL_COMMANDS_LIST:
             return getattr(self.__console, key)
         return super().__getattribute__(key)
 
