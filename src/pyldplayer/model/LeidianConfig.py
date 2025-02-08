@@ -3,7 +3,7 @@ import json
 from typing import TypedDict, Optional
 import typing
 
-from pyldplayer.utils import parse_dotted_dict, flatten_nested_dict
+from pyldplayer.utils.dotdict import parse_dotted_dict, flatten_nested_dict
 
 
 class HotkeySettings(TypedDict):

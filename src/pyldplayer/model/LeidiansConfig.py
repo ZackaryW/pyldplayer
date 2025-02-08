@@ -2,8 +2,7 @@ from dataclasses import asdict, dataclass
 import json
 from typing import TypedDict
 import typing
-from ..utils import flatten_nested_dict, parse_dotted_dict
-
+from pyldplayer.utils.dotdict import flatten_nested_dict, parse_dotted_dict
 
 class WindowsPosition(TypedDict):
     x: int
