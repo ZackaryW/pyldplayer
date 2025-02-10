@@ -41,11 +41,14 @@ class LDBatchConsole(I.LDConsoleI, ContainLDAppAttrI):
         return super().__getattribute__(key)
 
     def query(self, query : str):
-        queryObj = QueryObj.parse(query)
+        if isinstance(query, QueryObj):
+            queryObj = query
+        else:
+            queryObj = QueryObj.parse(query)
+
         for meta in self.__console.list2():
             if queryObj.validate(meta):
                 yield meta
-    
 
     def __batch_command(self, key : str):
         def wrapper( query, *args, **kwargs):
