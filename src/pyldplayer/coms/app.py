@@ -9,6 +9,7 @@ from pyldplayer.model.kmp import KeyboardMappingFile
 from pyldplayer.model.record import LDRecord
 from pyldplayer.model.smp import SMPFile
 
+
 class Flags:
     RECORD = 1
     KMP = 2

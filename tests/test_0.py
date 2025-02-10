@@ -5,8 +5,6 @@ from pyldplayer.coms.app import Flags, LDApp
 from pyldplayer.coms.appattr import LDAppAttr
 
 
-
-
 def test_same_instance():
     
     from pyldplayer.coms.batchConsole import LDBatchConsole
@@ -28,4 +26,8 @@ def test_init_via_environ():
 
 def test_2():
     app = LDApp()
-    app[Flags.RECOMMENDED, Flags.SMP, "some query"]
+    try:
+        app[Flags.RECOMMENDED, Flags.SMP, "some query"]
+        assert False
+    except FileNotFoundError as e:
+        print(e)

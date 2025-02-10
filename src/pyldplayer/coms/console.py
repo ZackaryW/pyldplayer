@@ -2,10 +2,11 @@
 import logging
 import typing
 import inspect
-import pyldplayer.i.console as I
-from ..model.list2meta import List2Meta
-from ..utils import open_detached, query
-from ..coms.appattr import ContainLDAppAttrI, LDAppAttr
+import pyldplayer.interfaces.console as I
+from pyldplayer.model.list2meta import List2Meta
+from pyldplayer.utils.subproc import open_detached, query
+from pyldplayer.coms.appattr import ContainLDAppAttrI, LDAppAttr
+
 
 class LDConsole(I.LDConsoleI, ContainLDAppAttrI):
     """

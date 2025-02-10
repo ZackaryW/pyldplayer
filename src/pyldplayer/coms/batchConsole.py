@@ -1,9 +1,9 @@
 
 import typing
-import pyldplayer.i.console as I
+import pyldplayer.interfaces.console as I
 from pyldplayer.coms.appattr import ContainLDAppAttrI, LDAppAttr
 from pyldplayer.coms.console import LDConsole
-from pyldplayer.model.queryObj import QueryObj
+from pyldplayer.utils.query import QueryObj
 
 class LDBatchConsole(I.LDConsoleI, ContainLDAppAttrI):
     """
@@ -40,14 +40,19 @@ class LDBatchConsole(I.LDConsoleI, ContainLDAppAttrI):
             return getattr(self.__console, key)
         return super().__getattribute__(key)
 
+    def query(self, query : str):
+        queryObj = QueryObj.parse(query)
+        for meta in self.__console.list2():
+            if queryObj.validate(meta):
+                yield meta
+    
+
     def __batch_command(self, key : str):
         def wrapper( query, *args, **kwargs):
-            queryObj = QueryObj.parse(query)
             consoleMethod = getattr(self.__console, key)
-            for meta in self.__console.list2():
-                if queryObj.validate(meta):
-                    for callback in self.pre_callbacks:
-                        callback(meta)
+            for meta in self.query(query):
+                for callback in self.pre_callbacks:
+                    callback(meta)
                     consoleMethod(index = meta["id"], *args, **kwargs)
                     for callback in self.post_callbacks:
                         callback(meta)

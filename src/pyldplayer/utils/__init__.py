@@ -25,6 +25,3 @@ class CachableProperty:
         if self.__name__ in obj.__dict__:
             del obj.__dict__[self.__name__]
 
-#
-
-# subproc

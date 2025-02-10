@@ -1,6 +1,6 @@
 [project]
 name = "pyldplayer"
-version = "4.0.2"
+version = "4.1.0"
 description = "python wrapper for LDPlayer with no additional dependencies"
 authors = [
     { name = "ZackaryW", email = "36378555+ZackaryW@users.noreply.github.com" }
@@ -17,6 +17,7 @@ build-backend = "hatchling.build"
 managed = true
 dev-dependencies = [
     "pytest>=8.3.3",
+    "python-dotenv>=1.0.1",
 ]
 
 [tool.hatch.metadata]
