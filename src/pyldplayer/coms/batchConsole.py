@@ -49,9 +49,10 @@ class LDBatchConsole(I.LDConsoleI, ContainLDAppAttrI):
 
         listofmetas = []
         if isinstance(query, (QueryObj, str)):
-            queryObj = QueryObj.parse(query)
+            if isinstance(query, str):
+                query = QueryObj.parse(query)
             for meta in self.__console.list2():
-                if queryObj.validate(meta):
+                if query.validate(meta):
                     listofmetas.append(meta)
         else:
             for item in self.list2():
