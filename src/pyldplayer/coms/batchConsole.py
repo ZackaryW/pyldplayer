@@ -56,9 +56,9 @@ class LDBatchConsole(I.LDConsoleI, ContainLDAppAttrI):
             for meta in self.query(query):
                 for callback in self.pre_callbacks:
                     callback(meta)
-                    consoleMethod(index = meta["id"], *args, **kwargs)
-                    for callback in self.post_callbacks:
-                        callback(meta)
+                consoleMethod(index = meta["id"], *args, **kwargs)
+                for callback in self.post_callbacks:
+                    callback(meta)
 
         return wrapper
     
