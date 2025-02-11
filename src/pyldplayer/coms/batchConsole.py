@@ -35,25 +35,38 @@ class LDBatchConsole(I.LDConsoleI, ContainLDAppAttrI):
         if key.startswith("_"):
             return super().__getattribute__(key)
         if key in I.BATCHABLE_COMMANDS:
-            return self.__batch_command(key)
+            return self.batch_command(key)
         if key in I.FULL_COMMANDS_LIST:
             return getattr(self.__console, key)
         return super().__getattribute__(key)
 
-    def query(self, query : str):
-        if isinstance(query, QueryObj):
-            queryObj = query
-        else:
+    def query(self, query : typing.Union[str, QueryObj, typing.List[str]]):
+        if isinstance(query, str) and query.startswith("[") and query.endswith("]"):
+            try:
+                query = eval(query)
+            except: #noqa
+                raise ValueError(f"Invalid query: {query}")
+
+        listofmetas = []
+        if isinstance(query, (QueryObj, str)):
             queryObj = QueryObj.parse(query)
+            for meta in self.__console.list2():
+                if queryObj.validate(meta):
+                    listofmetas.append(meta)
+        else:
+            for item in self.list2():
+                if item["id"] in query:
+                    listofmetas.append(item)
+                elif item["name"] in query:
+                    listofmetas.append(item)
 
-        for meta in self.__console.list2():
-            if queryObj.validate(meta):
-                yield meta
+        return listofmetas
 
-    def __batch_command(self, key : str):
+    def batch_command(self, key : str):
         def wrapper( query, *args, **kwargs):
+            listofmetas = self.query(query)
             consoleMethod = getattr(self.__console, key)
-            for meta in self.query(query):
+            for meta in listofmetas:
                 for callback in self.pre_callbacks:
                     callback(meta)
                 consoleMethod(index = meta["id"], *args, **kwargs)

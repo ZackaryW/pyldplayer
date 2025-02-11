@@ -54,5 +54,10 @@ from pyldplayer import LDConsole
 
 console = LDBatchConsole()
 console.add_interval() # this adds a sleep interval
-console.launch([1,2,3])
+console.launch([1,2,3]) # simple list of ids or names
+console.launch("p[1-9]") # regex pattern
+console.launch("name.startswith('p') and pid != -1") # compound query
+
+# alternative approach
+console.batch_command("launch")("p[1-9]")
 ```

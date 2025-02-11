@@ -1,6 +1,6 @@
 [project]
 name = "pyldplayer"
-version = "4.1.3"
+version = "4.1.5"
 description = "python wrapper for LDPlayer with no additional dependencies"
 authors = [
     { name = "ZackaryW", email = "36378555+ZackaryW@users.noreply.github.com" }
