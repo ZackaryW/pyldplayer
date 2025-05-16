@@ -1,3 +1,7 @@
+> This project is revamped at [pyldplayer2](https://github.com/ZackaryW/pyldplayer2)
+
+> pyldplayer2 offers more features and better stability
+
 # pyldplayer
 a python wrapper for LDPlayer
 
